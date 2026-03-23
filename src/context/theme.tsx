@@ -1,10 +1,10 @@
 import React, {
+  type CSSProperties,
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 
@@ -14,6 +14,8 @@ export type ResolvedTheme = "light" | "dark";
 export type ThemeContextValue = {
   mode: ThemeMode;
   setMode: (mode: ThemeMode) => void;
+  forcedMode: ThemeMode | null;
+  setForcedMode: (mode: ThemeMode | null) => void;
   resolvedTheme: ResolvedTheme;
 };
 
@@ -26,11 +28,6 @@ function getSystemTheme(): ResolvedTheme {
   return window.matchMedia?.("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
-}
-
-function resolveTheme(mode: ThemeMode): ResolvedTheme {
-  if (mode === "system") return getSystemTheme();
-  return mode;
 }
 
 function readStoredMode(): ThemeMode | null {
@@ -60,39 +57,94 @@ function applyResolvedThemeToDom(resolvedTheme: ResolvedTheme) {
   (document.documentElement.style as any).colorScheme = resolvedTheme;
 }
 
+export function ThemeScope({
+  mode,
+  children,
+  className,
+  style,
+}: {
+  mode: ThemeMode;
+  children: React.ReactNode;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(() =>
+    getSystemTheme(),
+  );
+
+  useEffect(() => {
+    if (mode !== "system") return;
+    if (typeof window === "undefined") return;
+
+    const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mql) return;
+
+    const handleChange = () => setSystemTheme(getSystemTheme());
+
+    // Safari compatibility
+    if (typeof mql.addEventListener === "function") {
+      mql.addEventListener("change", handleChange);
+      return () => mql.removeEventListener("change", handleChange);
+    }
+
+    // eslint-disable-next-line deprecation/deprecation
+    mql.addListener(handleChange);
+    // eslint-disable-next-line deprecation/deprecation
+    return () => mql.removeListener(handleChange);
+  }, [mode]);
+
+  const resolvedTheme = mode === "system" ? systemTheme : mode;
+
+  return (
+    <div
+      data-tux-color-scheme={resolvedTheme}
+      className={className}
+      style={{ ...(style ?? {}), colorScheme: resolvedTheme }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setModeState] = useState<ThemeMode>(
     () => readStoredMode() ?? "system",
   );
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
-    resolveTheme(mode),
+  const [forcedMode, setForcedModeState] = useState<ThemeMode | null>(null);
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(() =>
+    getSystemTheme(),
   );
-
-  const modeRef = useRef(mode);
-  modeRef.current = mode;
 
   const setMode = useCallback((nextMode: ThemeMode) => {
     setModeState(nextMode);
     writeStoredMode(nextMode);
   }, []);
 
-  useEffect(() => {
-    const nextResolved = resolveTheme(mode);
-    setResolvedTheme(nextResolved);
-    applyResolvedThemeToDom(nextResolved);
-  }, [mode]);
+  const setForcedMode = useCallback((nextMode: ThemeMode | null) => {
+    setForcedModeState(nextMode);
+  }, []);
 
   useEffect(() => {
-    // Keep resolvedTheme in sync with system changes when mode=system
+    const baseResolved = mode === "system" ? systemTheme : mode;
+    const forcedResolved =
+      forcedMode == null
+        ? null
+        : forcedMode === "system"
+          ? systemTheme
+          : forcedMode;
+    const nextResolved = forcedResolved ?? baseResolved;
+    applyResolvedThemeToDom(nextResolved);
+  }, [forcedMode, mode, systemTheme]);
+
+  useEffect(() => {
+    // Keep systemTheme in sync with system changes.
     if (typeof window === "undefined") return;
     const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
     if (!mql) return;
 
     const handleChange = () => {
-      if (modeRef.current !== "system") return;
       const nextResolved = getSystemTheme();
-      setResolvedTheme(nextResolved);
-      applyResolvedThemeToDom(nextResolved);
+      setSystemTheme(nextResolved);
     };
 
     // Safari compatibility
@@ -107,9 +159,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mql.removeListener(handleChange);
   }, []);
 
+  const baseResolvedTheme: ResolvedTheme = mode === "system" ? systemTheme : mode;
+  const forcedResolvedTheme: ResolvedTheme | null =
+    forcedMode == null
+      ? null
+      : forcedMode === "system"
+        ? systemTheme
+        : forcedMode;
+  const resolvedTheme: ResolvedTheme = forcedResolvedTheme ?? baseResolvedTheme;
+
   const value = useMemo<ThemeContextValue>(
-    () => ({ mode, setMode, resolvedTheme }),
-    [mode, resolvedTheme, setMode],
+    () => ({ mode, setMode, forcedMode, setForcedMode, resolvedTheme }),
+    [forcedMode, mode, resolvedTheme, setForcedMode, setMode],
   );
 
   return (

@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @config "../tailwind.config.cjs";
+
+html,
+body {
+	touch-action: pan-x pan-y;
+}
