@@ -4,6 +4,18 @@ import "./index.css";
 import "@byted-tiktok/tux-web/styles.css";
 import App from "./App.tsx";
 import { ThemeProvider } from "./context/theme";
+import { isRouterPagePath } from "./components/route_switcher";
+import RouterPage from "./page/router_page";
+
+if (typeof window !== "undefined" && "ongesturestart" in window) {
+  const prevent = (event: Event) => {
+    event.preventDefault();
+  };
+
+  for (const type of ["gesturestart", "gesturechange", "gestureend"]) {
+    document.addEventListener(type, prevent, { passive: false });
+  }
+}
 
 if (typeof window !== "undefined" && "ongesturestart" in window) {
   const prevent = (event: Event) => {
@@ -18,7 +30,7 @@ if (typeof window !== "undefined" && "ongesturestart" in window) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      {isRouterPagePath(window.location.pathname) ? <RouterPage /> : <App />}
     </ThemeProvider>
   </StrictMode>,
 );
