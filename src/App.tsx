@@ -3,6 +3,7 @@ import AppFrame from "./components/app_frame";
 
 import { TUXApp } from "@byted-tiktok/tux-web";
 import AppTabBarView from "./components/app_tab_bar_view";
+import RouteSwitcher from "./components/route_switcher";
 import ThemeSwitcher from "./components/theme_switcher";
 import { useTheme } from "./context/theme";
 import StatusBar from "./components/status_bar";
@@ -29,7 +30,7 @@ function App() {
   const { resolvedTheme } = useTheme();
 
   return (
-    <TUXApp theme={resolvedTheme} textDirection="ltr" platform="desktop">
+    <TUXApp theme={resolvedTheme} textDirection="ltr" platform="iOS">
       <AppFrame>
         <div className="flex flex-col h-full min-h-0">
           <StatusBar />
@@ -80,6 +81,8 @@ function App() {
           />
         </div>
       </AppFrame>
+
+      <RouteSwitcher />
 
       <ThemeSwitcher />
     </TUXApp>
