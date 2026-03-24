@@ -1,7 +1,6 @@
 import { createElement, isValidElement, useEffect, useState } from "react";
 import type {
   CSSProperties,
-  ComponentType,
   ReactElement,
   ReactNode,
 } from "react";
@@ -12,10 +11,7 @@ type Five<T> = readonly [T, T, T, T, T];
 
 export type AppTabBarViewIcon =
   | ReactElement
-  | ComponentType<{
-      size?: number;
-      [key: string]: unknown;
-    }>;
+  | ((props: { size?: number; [key: string]: unknown }) => unknown);
 
 export type AppTabBarViewTabItem = {
   icon: AppTabBarViewIcon;
@@ -49,10 +45,11 @@ export type AppTabBarViewProps =
   | AppTabBarViewPropsWithTabs
   | AppTabBarViewPropsWithIcons;
 
-const renderIcon = (iconLike: AppTabBarViewIcon, size: number) =>
-  isValidElement(iconLike)
-    ? iconLike
-    : createElement(iconLike as ComponentType<any>, { size });
+const renderIcon = (iconLike: AppTabBarViewIcon, size: number) => {
+  if (isValidElement(iconLike)) return iconLike;
+
+  return createElement(iconLike as never, { size });
+};
 
 const normalizeTabItems = (
   props: AppTabBarViewProps,
