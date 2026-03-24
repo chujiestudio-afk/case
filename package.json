@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@byted-tiktok/tux-color": "^1.2.24",
+    "@byted-tiktok/tux-icons": "^2.39.51",
     "@byted-tiktok/tux-web": "^1.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
