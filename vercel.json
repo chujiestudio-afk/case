@@ -1,4 +1,7 @@
 {
+  "buildCommand": "echo 'using pre-built dist'",
+  "installCommand": "echo 'skip'",
+  "outputDirectory": "dist",
   "functions": {
     "api/claude/[...path].js": {
       "maxDuration": 30
