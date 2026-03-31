@@ -2,6 +2,12 @@
   "buildCommand": "echo 'using pre-built dist'",
   "installCommand": "echo 'skip'",
   "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/", "destination": "/analysis", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
   "functions": {
     "api/claude/[...path].js": {
       "maxDuration": 30
