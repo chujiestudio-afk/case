@@ -36,7 +36,8 @@ createRoot(document.getElementById("root")!).render(
       ) : isRouterPagePath(window.location.pathname) ? (
         <RouterPage />
       ) : (
-        <App />
+        // Default: redirect to analysis page
+        (() => { window.location.replace("/analysis"); return null; })()
       )}
     </ThemeProvider>
   </StrictMode>,
