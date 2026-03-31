@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/claude/[...path].js": {
+      "maxDuration": 30
+    }
+  }
+}

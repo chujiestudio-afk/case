@@ -6,6 +6,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   server: {
     host: true,
+    proxy: {
+      '/api/claude': {
+        target: 'https://pikachu.claudecode.love',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/claude/, ''),
+      },
+    },
   },
   plugins: [
     react(),

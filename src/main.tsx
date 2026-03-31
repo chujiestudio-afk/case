@@ -4,8 +4,9 @@ import "./index.css";
 import "@byted-tiktok/tux-web/styles.css";
 import App from "./App.tsx";
 import { ThemeProvider } from "./context/theme";
-import { isRouterPagePath } from "./components/route_switcher";
+import { isRouterPagePath, isAnalysisPagePath } from "./components/route_switcher";
 import RouterPage from "./page/router_page";
+import ImageAnalysisPage from "./page/image_analysis_page";
 
 if (typeof window !== "undefined" && "ongesturestart" in window) {
   const prevent = (event: Event) => {
@@ -30,7 +31,13 @@ if (typeof window !== "undefined" && "ongesturestart" in window) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      {isRouterPagePath(window.location.pathname) ? <RouterPage /> : <App />}
+      {isAnalysisPagePath(window.location.pathname) ? (
+        <ImageAnalysisPage />
+      ) : isRouterPagePath(window.location.pathname) ? (
+        <RouterPage />
+      ) : (
+        <App />
+      )}
     </ThemeProvider>
   </StrictMode>,
 );

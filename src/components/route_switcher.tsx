@@ -8,10 +8,15 @@ import {
 import { useMemo, useState } from "react";
 
 export const ROUTER_PAGE_PATH = "/router_page";
+export const ANALYSIS_PAGE_PATH = "/analysis";
 export const ROOT_APP_PATH = "/";
 
 export function isRouterPagePath(pathname: string) {
   return pathname === ROUTER_PAGE_PATH;
+}
+
+export function isAnalysisPagePath(pathname: string) {
+  return pathname === ANALYSIS_PAGE_PATH;
 }
 
 function navigateTo(pathname: string) {
@@ -47,6 +52,18 @@ export default function RouteSwitcher() {
             <TUXIconArrowRightLTR size={16} />
           ),
         onClick: () => navigateTo(ROUTER_PAGE_PATH),
+      },
+      {
+        type: "item" as const,
+        text: "图片玩法引擎",
+        leadingIcon: <span style={{ fontSize: 16 }}>🎮</span>,
+        trailing:
+          pathname === ANALYSIS_PAGE_PATH ? (
+            <span className="opacity-60 text-[12px]">Current</span>
+          ) : (
+            <TUXIconArrowRightLTR size={16} />
+          ),
+        onClick: () => navigateTo(ANALYSIS_PAGE_PATH),
       },
     ],
     [pathname],
