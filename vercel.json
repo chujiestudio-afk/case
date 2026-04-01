@@ -6,7 +6,8 @@
     { "source": "/", "destination": "/analysis", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    { "source": "/analysis", "destination": "/index.html" },
+    { "source": "/analysis/(.*)", "destination": "/index.html" }
   ],
   "functions": {
     "api/claude/[...path].js": {
