@@ -1,6 +1,6 @@
 {
+  "installCommand": "npm install --omit=dev",
   "buildCommand": "echo 'using pre-built dist'",
-  "installCommand": "echo 'skip'",
   "outputDirectory": "dist",
   "redirects": [
     { "source": "/", "destination": "/analysis", "permanent": false }
