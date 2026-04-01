@@ -237,12 +237,16 @@ function getMediaType(file: File): "image/jpeg" | "image/png" | "image/gif" | "i
 }
 
 const AVAILABLE_MODELS = [
+  "claude-sonnet-4-5-20250929",
   "claude-sonnet-4-6",
   "claude-opus-4-6",
-  "claude-sonnet-4-5-20250929",
   "claude-opus-4-5-20251101",
   "claude-haiku-4-5-20251001",
 ];
+
+// In dev, read API key from .env.local (VITE_CLAUDE_API_KEY=sk-...)
+// In production, the serverless function injects it from CLAUDE_API_KEY env var
+const DEV_API_KEY = (import.meta.env?.VITE_CLAUDE_API_KEY as string) || "";
 
 async function analyzeWithClaude(
   file: File,
@@ -591,7 +595,7 @@ export default function ImageAnalysisPage() {
       setError(null);
       setAnalyzing(true);
       try {
-        const res = await analyzeTextWithClaude(text, "", "", AVAILABLE_MODELS[0]);
+        const res = await analyzeTextWithClaude(text, DEV_API_KEY, "", AVAILABLE_MODELS[0]);
         setResult(res);
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "分析失败");
@@ -610,7 +614,7 @@ export default function ImageAnalysisPage() {
       setError(null);
       setAnalyzing(true);
       try {
-        const res = await analyzeWithClaude(file, "", "", AVAILABLE_MODELS[0]);
+        const res = await analyzeWithClaude(file, DEV_API_KEY, "", AVAILABLE_MODELS[0]);
         setResult(res);
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : "分析失败");

@@ -1,35 +1,42 @@
+const https = require('https');
+
 module.exports = async function handler(req, res) {
   const apiKey = process.env.CLAUDE_API_KEY || '';
-
   const path = req.url.replace(/^\/api\/claude/, '') || '/';
-  const targetUrl = `https://pikachu.claudecode.love${path}`;
+  const body = JSON.stringify(req.body);
 
-  const fetchOptions = {
+  const options = {
+    hostname: 'pikachu.claudecode.love',
+    path: path,
     method: req.method,
     headers: {
       'content-type': 'application/json',
+      'content-length': Buffer.byteLength(body),
       'x-api-key': apiKey,
       'anthropic-version': req.headers['anthropic-version'] || '2023-06-01',
     },
   };
 
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    fetchOptions.body = JSON.stringify(req.body);
-  }
+  return new Promise((resolve) => {
+    const proxyReq = https.request(options, (proxyRes) => {
+      let data = '';
+      proxyRes.on('data', (chunk) => { data += chunk; });
+      proxyRes.on('end', () => {
+        try {
+          res.status(proxyRes.statusCode).json(JSON.parse(data));
+        } catch (e) {
+          res.status(proxyRes.statusCode).send(data);
+        }
+        resolve();
+      });
+    });
 
-  try {
-    const upstream = await fetch(targetUrl, fetchOptions);
-    const data = await upstream.json();
-    res.status(upstream.status).json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+    proxyReq.on('error', (err) => {
+      res.status(500).json({ error: err.message });
+      resolve();
+    });
 
-module.exports.config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
+    proxyReq.write(body);
+    proxyReq.end();
+  });
 };
