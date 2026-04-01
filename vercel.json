@@ -7,10 +7,5 @@
   "rewrites": [
     { "source": "/analysis", "destination": "/index.html" },
     { "source": "/analysis/(.*)", "destination": "/index.html" }
-  ],
-  "functions": {
-    "api/claude.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
