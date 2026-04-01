@@ -1,5 +1,4 @@
 {
-  "installCommand": "npm install --omit=dev",
   "buildCommand": "echo 'using pre-built dist'",
   "outputDirectory": "dist",
   "redirects": [
