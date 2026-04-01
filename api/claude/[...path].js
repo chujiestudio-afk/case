@@ -1,6 +1,6 @@
-const https = require('https');
+import https from 'https';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const apiKey = process.env.CLAUDE_API_KEY || '';
   const path = req.url.replace(/^\/api\/claude/, '') || '/';
   const body = JSON.stringify(req.body);
@@ -39,4 +39,4 @@ module.exports = async function handler(req, res) {
     proxyReq.write(body);
     proxyReq.end();
   });
-};
+}
