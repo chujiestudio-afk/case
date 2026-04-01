@@ -2,5 +2,29 @@
   "name": "tiktok_ux_demo",
   "private": true,
   "version": "0.0.1",
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@byted-tiktok/tux-color": "^1.2.24",
+    "@byted-tiktok/tux-icons": "^2.39.51",
+    "@byted-tiktok/tux-web": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.13.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.0",
+    "vite-plugin-pwa": "^1.2.0"
+  }
 }
