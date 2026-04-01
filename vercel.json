@@ -10,7 +10,7 @@
     { "source": "/analysis/(.*)", "destination": "/index.html" }
   ],
   "functions": {
-    "api/claude/[...path].js": {
+    "api/[...path].js": {
       "maxDuration": 30
     }
   }

@@ -2,6 +2,9 @@ import https from 'https';
 
 export default async function handler(req, res) {
   const apiKey = process.env.CLAUDE_API_KEY || '';
+
+  // Forward everything under /api/* to pikachu proxy
+  // e.g. /api/claude/v1/messages → /v1/messages (strip /api/claude)
   const path = req.url.replace(/^\/api\/claude/, '') || '/';
   const body = JSON.stringify(req.body);
 
