@@ -10,7 +10,7 @@ export default defineConfig({
       '/api/claude': {
         target: 'https://pikachu.claudecode.love',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/claude/, ''),
+        rewrite: (path) => '/v1/messages',
       },
     },
   },

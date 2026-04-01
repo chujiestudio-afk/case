@@ -258,7 +258,7 @@ async function analyzeWithClaude(
   const mediaType = getMediaType(file);
 
   // Use Vite dev proxy to avoid CORS issues
-  const url = "/api/claude/v1/messages";
+  const url = "/api/claude";
 
   const response = await fetch(url, {
     method: "POST",
